@@ -1,21 +1,19 @@
-package com.mahammad.laptops_az.service;
+package com.mahammad.laptops_az.service.impl;
 
 import com.mahammad.laptops_az.dto.ProductDto;
-import com.mahammad.laptops_az.exception.CategoryNotFoundException;
-import com.mahammad.laptops_az.exception.ProductNotFoundException;
+import com.mahammad.laptops_az.exception.ApplicationException;
+import com.mahammad.laptops_az.exception.ExceptionEnum;
 import com.mahammad.laptops_az.model.Category;
 import com.mahammad.laptops_az.model.Product;
 import com.mahammad.laptops_az.repository.CategoryRepository;
 import com.mahammad.laptops_az.repository.ProductRepository;
-import com.mahammad.laptops_az.service.impl.IProductService;
+import com.mahammad.laptops_az.service.IProductService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class ProductService implements IProductService {
         log.info("===================== GET ALL PRODUCTS =====================");
         List<Product> products = productRepository.findAll();
         if (products.isEmpty()) {
-            throw new ProductNotFoundException("No products found");
+            throw new ApplicationException(ExceptionEnum.PRODUCT_NOT_FOUND_EXCEPTION);
         }
         return products;
     }
@@ -40,7 +38,7 @@ public class ProductService implements IProductService {
     @Override
     public Product getProductById(int id) {
         log.info("===================== GET PRODUCT BY ID =====================");
-        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + id));
+        Product product = productRepository.findById(id).orElseThrow(() -> new ApplicationException(ExceptionEnum.PRODUCT_NOT_FOUND_EXCEPTION));
         return product;
     }
 
@@ -52,7 +50,7 @@ public class ProductService implements IProductService {
 
         // Find Category
         Category category = categoryRepository.findById(productDto.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found with ID: " + productDto.getCategoryId()));
+                .orElseThrow(() -> new ApplicationException(ExceptionEnum.CATEGORY_NOT_FOUND_EXCEPTION));
 
         // Build product
         Product product = Product.builder()

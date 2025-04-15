@@ -9,27 +9,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Handle ProductNotFoundException
-    @ExceptionHandler
-    public ResponseEntity<ServiceResponse<String>> handleProductNotFoundException(ProductNotFoundException ex) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ServiceResponse.failure(ex.getMessage()));
-    }
-
-    // Handle CategoryNotFoundException
-    @ExceptionHandler
-    public ResponseEntity<ServiceResponse<String>> handleCategoryNotFoundException(CategoryNotFoundException ex) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ServiceResponse.failure(ex.getMessage()));
-    }
-
-    // Handle Global Exceptions
-    @ExceptionHandler
-    public ResponseEntity<ServiceResponse<String>> handleGlobalException(Exception ex) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ServiceResponse.failure("Server Error: " + ex.getMessage()));
+    // Handle ApplicationException
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<ServiceResponse<?>> handleApplicationException(ApplicationException exception) {
+        return ResponseEntity.status(exception.getExceptionEnum().getStatus())
+                .body(ServiceResponse.failure(exception.getExceptionEnum().getMessage()));
     }
 }
